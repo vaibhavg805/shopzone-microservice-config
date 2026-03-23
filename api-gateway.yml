@@ -1,0 +1,33 @@
+server:
+  port: 8099
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+
+        # User Service Routes
+        - id: user-service-route
+          uri: lb://user-service-impl          # lb = load balanced via Eureka
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1               # strips /api before forwarding
+
+        # Product Service Routes
+        - id: product-service-route
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
