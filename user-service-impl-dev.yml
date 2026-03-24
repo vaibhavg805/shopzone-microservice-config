@@ -56,3 +56,34 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+resilience4j:
+
+  circuitbreaker:
+    instances:
+      productServiceCB:             # ← this name you will use in annotation
+        sliding-window-size: 10     # watch last 10 requests
+        failure-rate-threshold: 50  # if 50% fail → OPEN
+        wait-duration-in-open-state: 30s   # stay OPEN for 30 secs
+        permitted-number-of-calls-in-half-open-state: 3  # test with 3 calls
+        automatic-transition-from-open-to-half-open-enabled: true
+
+  retry:
+    instances:
+      productServiceRetry:          # ← this name you will use in annotation
+        max-attempts: 3             # try 3 times total
+        wait-duration: 2s           # wait 2 seconds between retries
+
+  timelimiter:
+    instances:
+      productServiceCB:
+        timeout-duration: 4s        # if no response in 4s → failure
+
+# See circuit breaker state via actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakers
+  health:
+    circuitbreakers:
+      enabled: true
