@@ -73,12 +73,15 @@ resilience4j:
         record-exceptions:
           - feign.FeignException
           - java.io.IOException
+          - java.lang.Exception
 
   retry:
     instances:
       productServiceRetry:
         max-attempts: 3
         wait-duration: 2s
+        retry-exceptions:
+          - java.lang.Exception
 
 # 
 
