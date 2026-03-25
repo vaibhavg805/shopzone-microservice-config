@@ -29,6 +29,20 @@ jwt:
 file:
   uploadDir: uploads
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
 logging:
   level:
     org.flywaydb: DEBUG
@@ -36,19 +50,5 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.hibernate.tool.schema: DEBUG
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-management:
-  tracing:
-    sampling:
-      probability: 1.0    # ← trace 100% of requests
-                          # in production use 0.1 (10%)
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-
-logging:
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
