@@ -1,6 +1,30 @@
 server:
   port: 8099
 
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+
+        # User Service Routes
+        - id: user-service-route
+          uri: lb://user-service-impl
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+
+        # Product Service Routes
+        - id: product-service-route
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
+
 eureka:
   client:
     service-url:
@@ -11,35 +35,18 @@ eureka:
 jwt:
   secret: ${JWT_SECRET}
 
-spring:
-  cloud:
-    gateway:
-      routes:
-
-        # User Service Routes
-        - id: user-service-route
-          uri: lb://user-service-impl          # lb = load balanced via Eureka
-          predicates:
-            - Path=/api/user/**
-          filters:
-            - StripPrefix=1               # strips /api before forwarding
-
-        # Product Service Routes
-        - id: product-service-route
-          uri: lb://product-service
-          predicates:
-            - Path=/api/products/**
-          filters:
-            - StripPrefix=1
 management:
   tracing:
     sampling:
-      probability: 1.0    # ← trace 100% of requests
-                          # in production use 0.1 (10%)
+      probability: 1.0
+
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
 
 logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
