@@ -89,7 +89,6 @@ management:
   health:
     circuitbreakers:
       enabled: true
-management:
   tracing:
     sampling:
       probability: 1.0    # ← trace 100% of requests
