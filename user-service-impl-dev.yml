@@ -38,27 +38,13 @@ server:
 jwt:
   secret: ${JWT_SECRET}
 
-logging:
-  level:
-    org:
-      flywaydb: DEBUG
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-        tool:
-          schema: DEBUG
-
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-# Resilience4j  CONFIG
+# Resilience4j CONFIG
 resilience4j:
-
   circuitbreaker:
     instances:
       productServiceCB:
@@ -79,24 +65,36 @@ resilience4j:
         retry-exceptions:
           - java.lang.Exception
 
-# 
-
 management:
   endpoints:
     web:
       exposure:
         include: health,circuitbreakers,circuitbreakerevents
+
   health:
     circuitbreakers:
       enabled: true
+
   tracing:
     sampling:
-      probability: 1.0    # ← trace 100% of requests
-                          # in production use 0.1 (10%)
+      probability: 1.0
+
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
 
 logging:
+  level:
+    org:
+      flywaydb: DEBUG
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        tool:
+          schema: DEBUG
+
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
